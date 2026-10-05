@@ -1,0 +1,7 @@
+IncomeGroup,Gender,n,mean_bmi
+High Income (>3.5),Female,11743,25.74167418887848
+High Income (>3.5),Male,12095,26.105941298057047
+Low Income (<1.3),Female,16548,25.94925731206188
+Low Income (<1.3),Male,14847,24.048654947127364
+Middle Income,Female,16432,26.386873782862708
+Middle Income,Male,15982,25.51923163559004
