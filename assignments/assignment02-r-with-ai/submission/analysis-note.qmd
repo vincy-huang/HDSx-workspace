@@ -59,7 +59,6 @@ mean_with_sd <- function(x) {
   tibble(mean = mean(x, na.rm = TRUE),
            sd = sd(x, na.rm = TRUE))
 }
-
 mean_with_sd(nhanes$BMI)
 ```
 
@@ -71,5 +70,4 @@ write_csv(bmi_summary, "assignments/assignment02-r-with-ai/submission/output/sum
 ```
 
 ## AI Audit Note
-
-Add comments explaining which parts were drafted or debugged with AI and how you verified the result.
+AI was not used for this submission.
