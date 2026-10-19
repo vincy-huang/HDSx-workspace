@@ -1,0 +1,112 @@
+---
+title: "Assignment 04 Polygplot"
+author: "Vincy Huang"
+---
+
+## Tasks of the Week
+- [x] Create or use the folder assignments/assignment04-polyglot/submission/.
+- [x] Create polyglot-parity.qmd.
+- [x] In R, load the NHANES CSV with a relative path.
+- [x] Produce a descriptive BMI summary by IncomeGroup and Gender.
+- [x] Refactor the R summary into one small reusable function.
+- [x] Create `translation.ipynb` and translate the same summary to Python/pandas.
+- [x] Create helpers.py with at least one reusable Python helper called from the notebook.
+- [x] Complete a parity table comparing row counts, filtered row counts, grouping labels, and rounded summary values.
+- [x] Write a dependency note naming the R and Python packages used. If an instructor-approved Python package is added, also update the root .devcontainer/requirements.txt; do not create a second manifest in the submission folder.
+- [x] Clear bulky notebook outputs before committing.
+- [x] Render the Quarto file to HTML.
+- [x] Commit and sync the assignment folder.
+
+```{r}
+#| message: false
+#| warning: false
+library(dplyr)
+library(readr)
+```
+
+## Load Data
+
+```{r}
+nhanes <- read_csv("examples/nhanes-equity/data/nhanes_equity_v6.csv", 
+                    show_col_types = FALSE)
+nhanes |> head()
+```
+
+### Descriptive BMI summary by IncomeGroup and Gender
+
+```{r}
+#| message: false
+#| warning: false
+bmi_summary_df <- nhanes |> 
+
+filter(IncomeGroup != "NA",
+               BMI != "NA") |>
+group_by(IncomeGroup, Gender) |>
+summarize(n = n(),
+    mean_BMI = mean(BMI),
+            sd_BMI = sd(BMI),
+        median_BMI = median(BMI),
+           max_BMI = max(BMI),
+           min_BMI = min(BMI)
+
+            )
+bmi_summary_df
+```
+
+### Refactor the R Summary into One Small Reusable Function
+```{r}
+bmi_summary <- function(df) {
+
+     summarized_bmi <- df |> 
+            filter(IncomeGroup != "NA", BMI != "NA") |>
+            group_by(IncomeGroup, Gender) |>
+            summarize(mean_BMI = mean(BMI),
+                        sd_BMI = sd(BMI),
+                    median_BMI = median(BMI),
+                    max_BMI = max(BMI),
+                    min_BMI = min(BMI))
+      summarized_bmi
+}
+```
+
+#### Testing out the Customized `bmi_summary` Function
+```{r}
+#| message: false
+#| warning: false
+bmi_summary(nhanes)
+```
+
+### Complete a parity table comparing row counts, filtered row counts, grouping labels, and rounded summary values
+```{r}
+#| message: false
+#| warning: false
+parity_table <- function(df) {
+     unfilter <- df |> 
+     group_by(IncomeGroup, Gender) |>
+     summarize(unfiltered_count = n())
+
+      summary_filtered_bmi  <- df |>
+                                filter(IncomeGroup != "NA", BMI != "NA") |>
+                                group_by(IncomeGroup, Gender) |>
+                                summarize(filtered_count = n(),
+                                                mean_BMI = round(mean(BMI),2),
+                                                  sd_BMI = round(sd(BMI),2),
+                                              median_BMI = round(median(BMI),2),
+                                                 max_BMI = round(max(BMI),2),
+                                                 min_BMI = round(min(BMI),2),
+                                                  .groups = "drop")
+      joined_df <- merge(unfilter, summary_filtered_bmi, by = c("IncomeGroup", "Gender")) 
+      joined_df
+}
+
+```
+
+```{r}
+#| message: false
+#| warning: false
+parity_table(nhanes)
+```
+
+**AI use note:** The code and markdown cells within this `polyglot-parity.qmd` worksheet are written by the author without use of AI. The R-to-Python translation of `bmi_summary()` and `parity_table()`, however, are done with the assistance of AI LLM in Copilot. 
+
+Please see `ai-use-note.md` for a full usage disclosure.
