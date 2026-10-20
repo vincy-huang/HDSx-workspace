@@ -1,8 +1,7 @@
 """Reusable helpers for NHANES BMI summaries."""
 # AI-USE note:
 # The untranslated R functions (bmi_summary, parity_table) were written by me without AI.
-# This Python helper translation of both functions was generated entirely with AI 
-# assistance for use from translation.ipynb.
+# This Python helper translation of both functions was written with AI assistance for use in translation.ipynb.
 #
 # Verified by: matching output shape/columns against the R parity_table(nhanes)
 # and confirming import + execution from the notebook.
