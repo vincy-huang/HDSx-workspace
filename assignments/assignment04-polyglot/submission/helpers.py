@@ -29,19 +29,22 @@ def bmi_summary(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def parity_table(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Build a parity table that joins:
-      - unfiltered counts by IncomeGroup × Gender
-      - filtered counts + rounded BMI summaries (IncomeGroup/BMI != "NA")
-    """
     unfiltered = (
         df.groupby(["IncomeGroup", "Gender"], as_index=False)
         .size()
         .rename(columns={"size": "unfiltered_count"})
     )
 
+    # Exclude both the string "NA" and real missing values
+    mask = (
+        (df["IncomeGroup"] != "NA")
+        & (df["BMI"] != "NA")
+        & df["IncomeGroup"].notna()
+        & df["BMI"].notna()
+    )
+
     filtered = (
-        df.loc[(df["IncomeGroup"] != "NA") & (df["BMI"] != "NA")]
+        df.loc[mask]
         .groupby(["IncomeGroup", "Gender"], as_index=False)
         .agg(
             filtered_count=("BMI", "size"),
@@ -53,11 +56,7 @@ def parity_table(df: pd.DataFrame) -> pd.DataFrame:
         )
     )
 
-    # Round numeric summary columns to 2 decimals (matching the R version)
     for col in ["mean_BMI", "sd_BMI", "median_BMI", "max_BMI", "min_BMI"]:
         filtered[col] = filtered[col].round(2)
 
-    joined = unfiltered.merge(
-        filtered, on=["IncomeGroup", "Gender"], how="outer"
-    )
-    return joined
+    return unfiltered.merge(filtered, on=["IncomeGroup", "Gender"], how="outer")

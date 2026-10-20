@@ -1,0 +1,8 @@
+metric,r_value,python_value,match,notes
+raw_row_count, 105626, 105626, yes,
+raw_column_count, 18, 18, yes,
+filtered_row_count, 87647, 87647, yes,
+number_of_groups, 6, 6, yes, 
+rounded_first_mean_BMI, 25.74, 25.74, yes,
+rounded_last_mean_BMI, 25.52, 25.52, yes,
+

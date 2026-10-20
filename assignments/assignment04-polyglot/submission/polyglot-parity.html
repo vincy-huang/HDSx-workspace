@@ -2364,7 +2364,8 @@ vertical-align: -.125em;
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">parity_table</span>(nhanes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>parity <span class="ot">&lt;-</span> <span class="fu">parity_table</span>(nhanes)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>parity</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         IncomeGroup Gender unfiltered_count filtered_count mean_BMI sd_BMI
 1 High Income (&gt;3.5) Female            12464          11743    25.74   7.51
@@ -2380,6 +2381,21 @@ vertical-align: -.125em;
 4      23.30  130.21   11.98
 5      25.30   81.25   11.10
 6      25.10   86.20   12.12</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(nhanes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 105626     18</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>parity <span class="sc">|&gt;</span> <span class="fu">select</span>(unfiltered_count, filtered_count) <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(<span class="at">sum_unfiltered =</span> <span class="fu">sum</span>(unfiltered_count),</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">sum_filtered =</span> <span class="fu">sum</span>(filtered_count))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  sum_unfiltered sum_filtered
+1          96211        87647</code></pre>
 </div>
 </div>
 <p><strong>AI use note:</strong> The code and markdown cells within this <code>polyglot-parity.qmd</code> worksheet are written by the author without use of AI. The R-to-Python translation of <code>bmi_summary()</code> and <code>parity_table()</code>, however, are done with the assistance of AI LLM in Copilot.</p>

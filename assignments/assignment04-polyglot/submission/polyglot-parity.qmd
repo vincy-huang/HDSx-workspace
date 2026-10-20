@@ -104,9 +104,21 @@ parity_table <- function(df) {
 ```{r}
 #| message: false
 #| warning: false
-parity_table(nhanes)
+parity <- parity_table(nhanes)
+parity
 ```
 
-**AI use note:** The code and markdown cells within this `polyglot-parity.qmd` worksheet are written by the author without use of AI. The R-to-Python translation of `bmi_summary()` and `parity_table()`, however, are done with the assistance of AI LLM in Copilot. 
+```{r}
+dim(nhanes)
+
+```
+
+```{r}
+parity |> select(unfiltered_count, filtered_count) |>
+summarize(sum_unfiltered = sum(unfiltered_count),
+          sum_filtered = sum(filtered_count))
+```
+
+**AI use note:** The code and markdown cells within this `polyglot-parity.qmd` worksheet are written by the author without use of AI. The R-to-Python translation of `bmi_summary()` and `parity_table()`, however, are written using `pandas` with the assistance of AI LLM in Copilot. 
 
 Please see `ai-use-note.md` for a full usage disclosure.
