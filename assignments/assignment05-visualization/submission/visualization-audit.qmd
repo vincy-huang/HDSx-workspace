@@ -1,0 +1,158 @@
+---
+title: "Assignment 05: Visualization"
+author: "Vincy Huang"
+---
+### Import Library
+```{r}
+#| warning: false
+library(tidyverse)
+```
+### Reading Data
+>Dataset: examples/nhanes-equity/data/nhanes_equity_v6.csv
+
+```{r}
+#| warning: false
+nhanes <- read_csv('examples/nhanes-equity/data/nhanes_equity_v6.csv')
+head(nhanes)
+colnames(nhanes)
+```
+
+### Choose one descriptive comparison from the NHANES CSV snapshot
+> Compare the BMI summary by IncomeGroup among different marital statuses based on the NHANES dataset. 
+```{r}
+#| warning: false
+
+comparison <- nhanes |> 
+na.omit(MaritalClean, IncomeGroup) |>
+group_by(IncomeGroup, MaritalClean) |>
+summarise(mean_BMI = median(BMI, na.rm = TRUE)) |>
+ungroup()
+
+comparison
+```
+> Based on the above summary comparison, we can see that the median BMI seems to be slightly lower amongst the higher income group, while there isn't much median difference in BMI between Low and Middle income groups across different marital statuses. However, this difference is not very pronounced.
+
+
+### Draft an initial plot using R and ggplot2.
+
+```{r}
+#| warning: false
+#| message: false
+ggplot(nhanes, aes(y = BMI, x = IncomeGroup, fill = MaritalClean)) +
+geom_bar(position = "dodge", stat = "identity") +
+labs(title = "BMI Summary by Income Group and Marital Status",
+x = "Income Group",
+y = "Body Mass Index (BMI)",
+fill = "Marital Status") +
+theme(plot.title = element_text(hjust = 0.5, size = 14),
+    axis.text.x = element_text(angle = 45, hjust = 1))
+```
+> This group does seem to support the initial descriptive interpretation that, on average, higher income groups have lower BMI values across different marital statuses. However, BMI on the y axis is not showing the mean BMI, which was used in the previous descriptive interpretation. Furthermore, NA value cleaning is needed to tidy up the plot.
+
+### Revise your plot so it supports a descriptive interpretation
+> In this revision, median is chosen as the summary statistic to represent the BMI values (since median is less sensitive to outliers in comparison to mean), and NA values are removed from the dataset to ensure a cleaner plot. 
+```{r}
+#| warning: false
+#| message: false
+revised_plt <- nhanes |>
+    na.omit(MaritalClean, IncomeGroup) |>
+    group_by(IncomeGroup, MaritalClean) |>
+    summarise(median_BMI = median(BMI, na.rm = TRUE),
+     .groups = "drop") |>
+
+  mutate(IncomeGroup = factor(IncomeGroup, 
+         levels = c("Low Income (<1.3)", 
+                    "Middle Income", 
+                    "High Income (>3.5)")),
+         MaritalClean = factor(MaritalClean, 
+                               levels = c("Married/Partner", 
+                               "Previously Married",
+                               "Never Married" 
+                               ))) |> 
+
+
+    ggplot(aes(y = median_BMI, x = IncomeGroup, fill = MaritalClean)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    labs(title = "Median BMI Summary by Income Group and Marital Status",
+    x = "Income Group",
+    y = "Median Body Mass Index (BMI)",
+    fill = "Marital Status") +
+    theme(plot.title = element_text(hjust = 0.5, size = 14),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 13)) +
+        theme_minimal()
+
+revised_plt
+```
+### Write a caption that includes data source, statistic, exclusions, and limitation:
+* Source: NHANES. The plot shows median BMI by income group and marital status. Records with missing BMI, income group, or marital status were excluded. Limitations: the plot does not support causal inference, and the median BMI may not fully capture the distribution of BMI values within each income group due to potential bias in the weight applied.
+
+### Audit the flawed plot starter and your own draft for scale choices, labels, missing context, aggregation, and overclaiming
+#### Fixing the Flawed Plot Starter:
+> **AI prompt**: "Do you see any flaws with this block of code. What are they?"
+>> Above prompt is verified to be correct. Copilot suggested to weight by a veriable named `WTMEC2YR`, but no such a column is found in our data. Instead, I used `WeightMEC` as the weight variable in the weighted mean calculation.
+```{r}
+#| warning: false
+cycle_levels <- sort(unique(nhanes$Cycle))
+endpoint_cycles <- c(cycle_levels[1], cycle_levels[length(cycle_levels)])
+
+audit_summary <- nhanes |>
+  filter(!is.na(BMI), 
+  !is.na(IncomeGroup), 
+  WeightMEC > 0,
+  Cycle %in% endpoint_cycles) |>
+
+  mutate(IncomeGroup = factor(IncomeGroup, 
+        levels = c("High Income (>3.5)",
+                   "Middle Income", 
+                   "Low Income (<1.3)"))) |> 
+
+  group_by(Cycle, IncomeGroup) |>
+  summarise(
+    weighted_mean_bmi = weighted.mean(BMI, WeightMEC),
+    n = n(),
+    .groups = "drop"
+  )
+audit_summary
+
+corrected_plot <- ggplot(
+  audit_summary,
+  aes(x = Cycle, y = weighted_mean_bmi, color = IncomeGroup, group = IncomeGroup)
+) +
+  geom_point(size = 3) +
+  geom_line(linetype = "solid", linewidth = 1) +
+  scale_y_continuous(limits = c(24, 28)) +
+  labs(
+    title = "BMI trends among American Adults across Different Income Groups\nbetween the 1999-2000 and 2017-2018 NHANES Cycles",
+    subtitle = "Weighted mean BMI in adults age 20-80 ",
+    x = "NHANES cycle",
+    y = "Weighted average BMI",
+    color = "Income"
+  ) +
+ scale_y_continuous(limits = c(0, NA), expand = c(0, 0)) +
+   theme_minimal(base_size = 12)
+
+print(corrected_plot)
+```
+**Changes I made to the flawed plot:**
+> 1. I added factor levels to ensure consistent ordering with `mutate()` and `factor`.
+> 1. Copilot suggested that another flaw with the flawed plot was that it used unweighted BMI average `mean_bmi` instead of applying a weighted average. 
+>   * In the augmented code, `weighted_mean_bmi` is created to account for the survey weights (with `WeightMEC`) in the NHANES dataset, which is important for accurate representation of the population.
+> 1. Added indication of group size with `n()`, where n in the summary is the number of records.
+> 1. Changed the title and subtitle to be more descriptive and accurate (e.g., BMI –> Weighted BMI; adding context about NHANEScycles in the title), avoiding overclaiming. 
+>   * The original title suggested a causal relationship ("Low income drives rising BMI"), which requires additionally experimental designs. The revised title and subtitle focus on the visual trends without implying /overstating causality.
+
+### Export the corrected plot as corrected-plot.png
+```{r}
+ggsave("assignments/assignment05-visualization/submission/corrected-plot.png", corrected_plot, width = 7, height = 6)
+```
+### Write a caption that includes data source, statistic, exclusions, and limitation (flawed started)
+* Source: NHANES. Points show weighted mean BMI (scale starting from 0) by income group for the 1999-2000 and 2021-2023 survey cycles. Records with missing BMI or income group were excluded. Limitations: the plot does not support causal inference, and the weighted mean BMI may not fully capture the distribution of BMI values within each income group due potential bias in the weight applied.
+
+### Add a plotly preview:
+```{r}
+plotly::ggplotly(corrected_plot)
+```
+
+### Write a short M1 link note naming how the visualization standard affects your project dataset, audience, or feasibility
+* The visualization standard requires the use of appropriate scales, labels, and legends to ensure clarity and interpretability for our intended audience (e.g., public health professionals). 
+* This standard further demands careful consideration of our project data sources, examination of variable definitions, and exploration of data missingness.
