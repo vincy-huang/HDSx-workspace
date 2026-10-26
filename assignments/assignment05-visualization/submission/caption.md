@@ -1,0 +1,2 @@
+# Caption for `corrected-plot.png`
+Source: NHANES. Points show weighted mean BMI (scale starting from 0) by income groups for the 1999-2000 and 2021-2023 survey cycles. Records with missing BMI or income group were excluded. Limitations: the plot does not support causal inference, and the weighted mean BMI may not fully capture the distribution of BMI values within each income group due potential bias in the weight applied.

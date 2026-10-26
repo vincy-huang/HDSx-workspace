@@ -7,8 +7,7 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 
-candidate_paths <- c(
-  "C:/Users/analyst/Desktop/nhanes_equity_v6.csv",
+candidate_paths <- c("C:/Users/analyst/Desktop/nhanes_equity_v6.csv",
   "examples/nhanes-equity/data/nhanes_equity_v6.csv",
   "../../../examples/nhanes-equity/data/nhanes_equity_v6.csv"
 )
