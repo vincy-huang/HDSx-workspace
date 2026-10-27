@@ -1,0 +1,72 @@
+---
+title: "Assignment 6 – EDA and AI Audit"
+author: "Vincy Huang"
+---
+> Expected to write a small comment about what's expected in the resultant table.
+
+### Tasks
+
+- [x] Create or use the folder assignments/assignment06-eda-ai-audit/submission/.
+- [x] Load the NHANES CSV snapshot with a relative path.
+- [] Define and document an analysis cohort using age 20-80.
+- [] Create a missingness table for key variables.
+- [] Produce a Table 1-style summary by IncomeGroup.
+- [] Include N, BMI mean (SD), and age mean (SD).
+- [] Write a short methods note stating that the analysis is descriptive, unweighted, and non-causal.
+- [] Audit the planted-error starter and list at least five issues.
+- [] Categorize each issue as correctness, reproducibility, interpretation, or stewardship.
+- [] Revise the provenance/stewardship statement so it names the data source, classroom-use context, and one privacy or stewardship caution.
+
+### Import Library
+```{r}
+#| warning: false
+library(tidyverse)
+```
+### Reading Data
+> Dataset: examples/nhanes-equity/data/nhanes_equity_v6.csv
+```{r}
+#| warning: false
+nhanes <- read_csv('examples/nhanes-equity/data/nhanes_equity_v6.csv')
+head(nhanes)
+colnames(nhanes)
+```
+
+### Define and document an analysis cohort using age 20-80
+> Filtering the data based on `Age` range.
+
+### Create a missingness table for key variables.
+```{r}
+```
+
+### Produce a Table 1-style summary by IncomeGroup.
+### Include N, BMI mean (SD), and age mean (SD).
+> * Expected to write a small comment about what's expected in the resultant table.
+> * Include a caption to the table.
+```{r}
+```
+
+
+### Write a short methods note stating that the analysis is descriptive, unweighted, and non-causal.
+* Methods Note: 
+
+### Audit the planted-error starter and list at least five issues.
+    1. 
+    2.
+    3.
+    4.
+    5.
+
+### Categorize each issue as correctness, reproducibility, interpretation, or stewardship.
+
+| Issue | Category | Why it matters | Corrected approach |
+|---|---|---|---|
+|  | Correctness |  |  |
+|  | Reproducibility |  |  |
+|  | Interpretation |  |  |
+|  | Stewardship |  |  |
+|  | Correctness |  |  |
+
+
+### Revise the provenance/stewardship statement so it names the data source, classroom-use context, and one privacy or stewardship caution.
+
+* [Revision: ...]
