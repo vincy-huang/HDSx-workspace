@@ -1,0 +1,2 @@
+# Provenance Stewardship Note
+* The summaries and graph generated in this analysis are descriptive and unweighted, the the data source comes from public-use NHANES Health Equity at the CDC (derived for classroom use). The data can be accessed through Github Codespace under the submission repository. The generated summaries do not account for the NHANES survey design, do not estimate the US adult population, and do not show that income causes BMI differences. No row-level data are uploaded to external AI tools

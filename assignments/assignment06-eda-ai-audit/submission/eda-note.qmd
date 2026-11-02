@@ -8,19 +8,20 @@ author: "Vincy Huang"
 
 - [x] Create or use the folder assignments/assignment06-eda-ai-audit/submission/.
 - [x] Load the NHANES CSV snapshot with a relative path.
-- [] Define and document an analysis cohort using age 20-80.
-- [] Create a missingness table for key variables.
-- [] Produce a Table 1-style summary by IncomeGroup.
-- [] Include N, BMI mean (SD), and age mean (SD).
-- [] Write a short methods note stating that the analysis is descriptive, unweighted, and non-causal.
-- [] Audit the planted-error starter and list at least five issues.
-- [] Categorize each issue as correctness, reproducibility, interpretation, or stewardship.
-- [] Revise the provenance/stewardship statement so it names the data source, classroom-use context, and one privacy or stewardship caution.
+- [x] Define and document an analysis cohort using age 20-80.
+- [x] Create a missingness table for key variables.
+- [x] Produce a Table 1-style summary by IncomeGroup.
+- [x] Include N, BMI mean (SD), and age mean (SD).
+- [x] Write a short methods note stating that the analysis is descriptive, unweighted, and non-causal.
+- [x] Audit the planted-error starter and list at least five issues.
+- [x] Categorize each issue as correctness, reproducibility, interpretation, or stewardship.
+- [x] Revise the provenance/stewardship statement so it names the data source, classroom-use context, and one privacy or stewardship caution.
 
 ### Import Library
 ```{r}
 #| warning: false
 library(tidyverse)
+library(knitr)
 ```
 ### Reading Data
 > Dataset: examples/nhanes-equity/data/nhanes_equity_v6.csv
@@ -32,41 +33,142 @@ colnames(nhanes)
 ```
 
 ### Define and document an analysis cohort using age 20-80
-> Filtering the data based on `Age` range.
+> Filtering the data based on `Age` range to records with age from 20 through 80, inclusive. Missing BMI and income group were counted before complete-case rows were selected for the grouped results.
+
+```{r}
+#| warning: false
+
+adult_cohort <- nhanes |>
+  filter(Age >= 20, Age <= 80) |>
+    mutate(IncomeGroup = factor(IncomeGroup, 
+         levels = c("Low Income (<1.3)", 
+                    "Middle Income", 
+                    "High Income (>3.5)")),
+         MaritalClean = factor(MaritalClean, 
+                               levels = c("Married/Partner", 
+                               "Previously Married",
+                               "Never Married" 
+                               ))) 
+
+cohort_counts <- tibble(step = c("Prepared data", "After age 20-80 restriction"),
+  n = c(nrow(nhanes), nrow(adult_cohort)))
+
+kable(cohort_counts)
+```
 
 ### Create a missingness table for key variables.
+> Key variables are defined as: `BMI`, `Age`, `IncomeGroup`, `Gender`, `MaritalClean`, `Race`, and `Cycle`.
 ```{r}
+#| warning: false
+
+key_vars <- c("BMI", "Age", "IncomeGroup", "Gender", "MaritalClean", "Race", "Cycle")
+
+missingness <- tibble(variable = key_vars) |>
+  mutate(
+    missing_n = vapply(
+      adult_cohort[key_vars],
+      function(x) sum(is.na(x)),
+      numeric(1)
+    ),
+    missing_percent = round(100 * missing_n / nrow(adult_cohort), 1)
+  )
+
+write_csv(
+  missingness,
+  "assignments/assignment06-eda-ai-audit/submission/missingness-summary.csv")
+
+kable(missingness)
 ```
 
 ### Produce a Table 1-style summary by IncomeGroup.
-### Include N, BMI mean (SD), and age mean (SD).
-> * Expected to write a small comment about what's expected in the resultant table.
+>  The following Table-1-style table uses rows with **non-missing** age and BMI while grouping by income groups after applying the age restriction. 
+
 > * Include a caption to the table.
 ```{r}
+#| warning: false
+
+complete_analysis <- adult_cohort |>
+  filter(!is.na(Age), !is.na(BMI), !is.na(IncomeGroup))
+
+table1 <- complete_analysis |>
+  group_by(IncomeGroup) |>
+  summarise(
+    N = n(),
+    `BMI, mean (SD)` = sprintf("%.1f (%.1f)", mean(BMI), sd(BMI)),
+    `BMI, median (SD)` = sprintf("%.1f (%.1f)", median(BMI), sd(BMI)),
+    `Age, mean (SD)` = sprintf("%.1f (%.1f)", mean(Age), sd(Age)),
+    `Age, median (SD)` = sprintf("%.1f (%.1f)", median(Age), sd(Age)),
+    .groups = "drop"
+  )
+
+write_csv(
+  table1,
+  "assignments/assignment06-eda-ai-audit/submission/table1.csv"
+)
+
+kable(table1,
+caption = "Table 1. Unweighted count for each income group with average and median summary with respective standard deviation of each income group")
+```
+
+### Preliminary Figure
+> Produce a preliminary exploratory figure that displays the Mean BMI across all available NHANES cylcle for adults age 20-80 based on different Income Groups. Overclaims about the data should be avoided.
+```{r}
+#| warning: false
+
+cycle_summary <- complete_analysis |>
+  filter(!is.na(Cycle)) |>
+  group_by(Cycle, IncomeGroup) |>
+  summarise(
+    n = n(),
+    mean_bmi = mean(BMI),
+    .groups = "drop") |>
+  filter(n >= 30) 
+cycle_summary
+
+ggplot(cycle_summary,
+  aes(x = Cycle, y = mean_bmi, color = IncomeGroup, group = IncomeGroup)
+) +
+  geom_line(linewidth = 0.9) +
+  geom_point(size = 2) +
+  scale_color_brewer(palette = "Dark2") +
+  expand_limits(y = 0) +
+  labs(
+    title = "Unweighted BMI average by income group across NHANES cycle",
+    subtitle = "Adults age 20-80; prepared example classroom data",
+    x = "NHANES cycle",
+    y = "Mean BMI (kg/m²; unweighted)",
+    color = "Income group"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "top"
+  )
 ```
 
 
 ### Write a short methods note stating that the analysis is descriptive, unweighted, and non-causal.
-* Methods Note: 
+* The summaries are descriptive, unweighted, and non-causal. The summaries and figure produced above do not account for the NHANES survey design (i.e., weights were not applied to calculation), do not estimate the US adult population, and do not show that different income causes BMI differences. Missing BMI or income-group records from surveyed adults are not included in the grouped results.
 
 ### Audit the planted-error starter and list at least five issues.
-    1. 
-    2.
-    3.
-    4.
-    5.
+1.  The data is not being imported using a relative path, meaning that collaborators or other auditors will not be able to replicate running the same code.
+2. The original author wrote that the age-restriction applied to the date would be adults age 20-80 inclusive, but their code doesn't capture the inclusive part (i.e., they filtered the age but excluded the lower limit 20 and the upper limit 80.)
+3. Did not disclose and describe their NA null value omission. 
+4. Did not write up a caption to describe the summary table for their Table-1-style summary.
+5. The original author claimed that, "The differences in BMI between income groups are **statistically significant**, which shows that income determines BMI". The first problem with this statement is that, the author has not done any stiatiscal test to establish conclusions about statistical significance. This is an overclaiming results since only basic summary statistics have been computed.
+6. The original author claimed that, "The differences in BMI between income groups are statistically significant, which shows that income **determines** BMI". The second problem with this statement is that, the dataset used by the author was a survey data but not a data of experimental design; but to causal claims like, "income **determines** or **causes** BMI", that requires the data collection to come from an experimental design that can rule out alternative explanations for any effects observed. This is also another example of overclaiming results.
 
 ### Categorize each issue as correctness, reproducibility, interpretation, or stewardship.
-
 | Issue | Category | Why it matters | Corrected approach |
 |---|---|---|---|
-|  | Correctness |  |  |
-|  | Reproducibility |  |  |
-|  | Interpretation |  |  |
-|  | Stewardship |  |  |
-|  | Correctness |  |  |
+|1.  The data is not being imported using a relative path, meaning that collaborators or other auditors will not be able to replicate running the same code.| Reproducibility |Using an absolute path instead of a relative path to read in the data breaks project reproducibility, meaning that this strips away a more convinient way for a code reviwer to verify the output of the code. |The author should correct their data import path by using a relative path such that the report can be reproduced by another auditor/code reviewers. Relative paths allows reviwers to re-run the analytic code from the project codespace|
+|2. The original author wrote that the age-restriction applied to the date would be adults age 20-80 inclusive, but their code doesn't capture them non-inclusively (i.e., they filtered the age but excluded the lower limit 20 and the upper limit 80.)| Correctness |Having their analysis code differ from their report content different can lead to reader misinterpretation. |The author should correct their analysis code so their mathmatical operations match with their report.|
+|3. Did not disclose and describe their NA null value omission. | Correctness |The removed NA data could be due to other important reasons, such as structual missingness where some responses are missing because of some situational patterns. Removing NA values without clearly disclosing them can harm data integrity and subsequent data validation by other reviewers. |The author should have fully disclose the number of NA responses and justify reasons for removing the missingness.|
+|4. Did not write up a caption to describe the summary table for their Table-1-style summary.| Correctness |A summary table without a descriptive caption to summarize its numbers can confuse readers by not providing sufficient context to the results. |The author should include a descriptive result summary in the caption attached to the table.|
+|5. The original author claimed that, "The differences in BMI between income groups are **statistically significant**, which shows that income determines BMI". The first problem with this statement is that, the author has not done any stiatiscal test to establish conclusions about statistical significance. This is an overclaiming results since only basic summary statistics have been computed.| Interpretation |Overclaiming statistical significance when the author has clearly **not** performed any statistical test will grossly mislead health professionals and policy makers about the differences/effects being reported by the authors.|The author should not report any approaches / claims that they have not performed to avoid overclaiming statistic significance.|
+|6. The original author claimed that, "The differences in BMI between income groups are statistically significant, which shows that income **determines** BMI". The second problem with this statement is that, the dataset used by the author was a survey data but not a data of experimental design; but to causal claims like, "income **determines** or **causes** BMI", that requires the data collection to come from an experimental design that can rule out alternative explanations for any effects observed. This is also another example of overclaiming results.| Interpretation |Overclaiming causality when the data collection method of the data doesn't supoprt it will mislead health professionals and policy makers about the effects being reported by the authors.|The author should not report any approaches / claims that they have not performed to avoid overclaiming causality.|
 
 
 ### Revise the provenance/stewardship statement so it names the data source, classroom-use context, and one privacy or stewardship caution.
 
-* [Revision: ...]
+* The summaries and graph generated in this analysis are descriptive and unweighted, the the data source comes from public-use NHANES Health Equity at the CDC (derived for classroom use). The data can be accessed through Github Codespace under the submission repository. The generated summaries do not account for the NHANES survey design, do not estimate the US adult population, and do not show that income causes BMI differences. No row-level data are uploaded to external AI tools

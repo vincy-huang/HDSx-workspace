@@ -1,6 +1,13 @@
 # Planted-Error Starter: Table 1 Audit {.unnumbered}
 
 This starter intentionally contains errors. Students should audit, correct, and explain the problems.
+#### Errors:
+1.  The data is not being imported using a relative path, meaning that collaborators or other auditors will not be able to replicate running the same code.
+2. The original author wrote that the age-restriction applied to the date would be adults age 20-80 inclusive, but their code doesn't capture the inclusive part (i.e., they filtered the age but excluded the lower limit 20 and the upper limit 80.)
+3. Did not disclose and describe their NA null value omission. 
+4. Did not write up a caption to describe the summary table for their Table-1-style summary.
+5. The original author claimed that, "The differences in BMI between income groups are **statistically significant**, which shows that income determines BMI". The first problem with this statement is that, the author has not done any stiatiscal test to establish conclusions about statistical significance. This is an overclaiming results since only basic summary statistics have been computed.
+6. The original author claimed that, "The differences in BMI between income groups are statistically significant, which shows that income **determines** BMI". The second problem with this statement is that, the dataset used by the author was a survey data but not a data of experimental design; but to causal claims like, "income **determines** or **causes** BMI", that requires the data collection to come from an experimental design that can rule out alternative explanations for any effects observed. This is also another example of overclaiming results.
 
 ```{r}
 #| label: planted-load-data
