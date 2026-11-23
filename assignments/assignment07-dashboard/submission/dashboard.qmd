@@ -1,0 +1,166 @@
+---
+title: "Week 7 Assignment - Dashboards"
+author: "Vincy Huang"
+format:
+  html:
+    embed-resources: true
+---
+## Tasks
+
+-[x] Create or use the folder `assignments/assignment07-dashboard/submission/`.
+-[x] Copy `assignments/assignment07-dashboard/dashboard-starter.qmd to assignments `assignment07-dashboard/submission/dashboard.qmd. Adapt and render this copy from the repository root. The Shiny exemplar is a demonstration and is not an approved A7 submission pathway without prior instructor approval.
+-[] Choose one audience, such as a **public-health analyst, student project team, or briefing group**.
+-[] Write one audience-specific dashboard question.
+-[] Identify one control, filter, or dashboard-style interaction and the visualization it affects.
+-[] Identify one label, caption, help text, interpretation note, or README sentence that could be clearer for that audience.
+-[] Make one **documentation-only or UI-text-only improvement**. **Do not** change analytic logic for this assignment.
+-[] Re-render the starter dashboard with a different control value and record the test result.
+-[] Write one limitation statement that belongs in or beside the dashboard.
+-[] Complete the privacy-safe publishing check before sharing screenshots or rendered outputs.
+
+
+<!-- AI-EDIT(2026-06-22): REVIEW-row194 (MIT-078/MIT-080) — per-page embed-resources:true so the standalone downloaded HTML bundles the plot (narrow fix per instructor decision; verify it survives the book render) -->
+
+# Dashboard Starter
+
+Copy this file to
+`assignments/assignment07-dashboard/submission/dashboard.qmd` before editing.
+Keep this original starter unchanged so you can compare your adaptation with it.
+
+## Where this fits
+
+This is the **required core artifact** for Assignment 7. The Shiny exemplar
+shown in class is a demonstration only; adapt this Quarto file instead.
+
+## Goal
+
+This starter shows how to turn the Week 7 descriptive summary into a dashboard-style KT product. It uses one editable control value, one visualization, one table, one interpretation, and one caution — the 1-1-1-1-1 rule made concrete.
+
+## Audience Question
+
+Audience: a public-health analyst preparing a short briefing on descriptive BMI patterns in the classroom NHANES equity dataset.
+
+Question: among adults age 20-80, how does mean BMI vary across NHANES cycles for one selected income group?
+
+## Setup
+
+```{r}
+#| label: dashboard-setup
+#| message: false
+#| warning: false
+library(tidyverse)  # AI-EDIT(2026-06-23): tidyverse-default — consolidated core library() calls into library(tidyverse)
+library(knitr)
+
+candidate_paths <- c(
+  "examples/nhanes-equity/data/nhanes_equity_v6.csv",
+  "../../examples/nhanes-equity/data/nhanes_equity_v6.csv"
+)
+
+data_path <- candidate_paths[file.exists(candidate_paths)][1]
+if (is.na(data_path)) {
+  stop("Could not find examples/nhanes-equity/data/nhanes_equity_v6.csv")
+}
+
+nhanes <- read_csv(data_path, show_col_types = FALSE)
+```
+
+## Control
+
+In a Shiny app, this would become a dropdown. In this static starter, change the value of `selected_income` and render again.
+
+```{r}
+#| label: dashboard-control
+available_income_groups <- sort(unique(na.omit(nhanes$IncomeGroup)))
+selected_income <- "Low Income (<1.3)"
+
+if (!selected_income %in% available_income_groups) {
+  selected_income <- available_income_groups[1]
+}
+
+selected_income
+```
+
+<!-- AI-EDIT(2026-06-11): MIT-081 — needs review -->
+For example, change the line to `selected_income <- "Middle Income"` — the other valid value in the classroom dataset is `"High Income (>3.5)"`. Copy the value exactly, including the quotes and any parentheses.
+
+## Summary
+
+```{r}
+#| label: dashboard-summary
+dashboard_summary <- nhanes |>
+  filter(
+    Age >= 20,
+    Age <= 80,
+    IncomeGroup == selected_income,
+    !is.na(BMI),
+    !is.na(Cycle)
+  ) |>
+  group_by(Cycle) |>
+  summarise(
+    n = n(),
+    mean_bmi = round(mean(BMI), 1),
+    .groups = "drop"
+  )
+
+kable(dashboard_summary)
+```
+
+## Visualization
+
+```{r}
+#| label: dashboard-plot
+ggplot(dashboard_summary, aes(x = Cycle, y = mean_bmi, group = 1)) +
+  geom_line(linewidth = 0.8, color = "#2f6f73") +
+  geom_point(size = 2.4, color = "#2f6f73") +
+  labs(
+    title = paste("Mean BMI for", selected_income),
+    subtitle = "Adults age 20-80 in the prepared NHANES Health Equity classroom dataset",
+    x = "NHANES cycle",
+    y = "Mean BMI",
+    caption = "Descriptive, unweighted classroom summary. Missing BMI, income group, cycle, and out-of-cohort ages are excluded."
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Interpretation
+
+For the selected income group, the table and figure describe the mean BMI pattern across available NHANES cycles in the prepared classroom dataset. The dashboard should help the audience ask better questions about pattern, timing, and context rather than treat the line as a causal explanation.
+
+## Limitation
+
+This starter is unweighted and descriptive. It does not account for NHANES survey design, does not estimate national prevalence, and should not be used to make causal claims about income and BMI.
+
+## Testing
+
+Before submitting a dashboard-style product:
+
+1. Render this page from the repository root.
+2. Change `selected_income` to another value from `available_income_groups`.
+3. Render again and check that the table, title, and plot all update.
+4. Verify that the caption still names the dataset, exclusions, and limitation.
+5. Record any warning or error in your testing log.
+
+From the repository root, render the submitted copy with:
+
+```bash
+quarto render assignments/assignment07-dashboard/submission/dashboard.qmd
+```
+
+HTML is the expected output for this dashboard — you do not need a PDF. If the render log warns about a missing TeX installation or a PDF problem, you can ignore it as long as the `.html` file was created. <!-- AI-EDIT(2026-06-22): REVIEW-row190 / MIT-080 — added cross-ref so the brief HTML/PDF reminder reads as intentional reinforcement of the fuller routine on dash05, not accidental duplication -->
+The Week 8 course page walks through the full six-step test routine.
+
+## Privacy-Safe Publishing
+
+- Use aggregate summaries, not row-level records.
+- Avoid small-cell interpretations when `n` is low.
+- State that outputs are descriptive and unweighted.
+- Keep cached classroom data separate from any raw NHANES retrieval workflow.
+- Do not upload row-level data to external AI tools.
+
+## Where this goes next
+
+Use the Week 8 course guidance to confirm that your change is audience-facing
+text rather than new analytic logic, then complete the required test and
+privacy notes.
+
