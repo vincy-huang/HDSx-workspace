@@ -1,0 +1,43 @@
+---
+title: "Three-Slide KT Story"
+author: "Student Name"
+format:
+  revealjs:
+    slide-number: true
+    embed-resources: true
+bibliography: ../../../references.bib
+---
+## Tasks
+- [] Choose one figure, table, or dashboard finding from prior work.
+- [] Define the audience in one sentence.
+- [] Write one plain-language takeaway that a non-technical reader can understand.
+- [] Create either slides.qmd as a revealjs deck or slide-outline.qmd as a structured slide outline. Copy the corresponding starter from assignments/assignment08-communication/ in your personal workspace into its submission/ folder and rename it before editing. Do not edit the original starter.
+- [] Include 3-5 slides or slide sections: context, evidence, takeaway, limitation, and next step.
+- [] Add one source note or citation for the dataset.
+- [] Complete the in-studio partner review early enough to make at least one A8 revision before submission. Also complete the Canvas Discussion exchange by the standard syllabus deadline — Monday after the Week 9 class, 4:00 PM. Canvas feedback may inform the presentation deck or final-portfolio revisions; it is not the feedback source required before the initial A8 submission.
+- [] Revise at least one sentence or slide based on feedback.
+- [] Document any AI assistance used for simplification, slide wording, or feedback synthesis.
+
+## Question And Audience
+
+**Audience:** Name the group that needs this result.
+
+**Question:** State one focused question.
+
+**Why it matters:** Explain the practical decision or conversation this result supports.
+
+## Evidence
+
+Insert one figure or table from prior work.
+
+State the finding in one sentence.
+
+Source note: CDC/NCHS NHANES public-use data are the source for the NHANES classroom example [@cdc-nhanes].
+
+## Limitation And Next Step
+
+**Limitation:** State what the evidence cannot prove.
+
+**Next step:** Name one action, discussion, or analysis that should follow.
+
+**AI-use note:** State whether AI helped draft or revise the slide wording and what you checked.
