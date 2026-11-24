@@ -112,12 +112,13 @@ ggplot(dashboard_summary, aes(x = Cycle, y = mean_bmi, group = 1)) +
   geom_line(linewidth = 0.8, color = "#2f6f73") +
   geom_point(size = 2.4, color = "#2f6f73") +
   labs(
-    title = paste("How has mean BMI changed across NHANES cycles for", selected_income, "adults ages 20-80?"),
-    subtitle = "Adults ages 20-80; selected from the prepared NHANES Health Equity classroom dataset",
+    title = paste("How has mean BMI changed across NHANES cycles for \n", selected_income, "adults ages 20-80?"),
+    subtitle = "Adults ages 20-80; selected from the prepared NHANES Health Equity classroom \n dataset",
     x = "NHANES cycle",
     y = "Mean BMI",
     caption = "Figure 1. Compare mean BMI across NHANES cycles for the selected income group among adults \n ages 20-80. Descriptive and unweighted; missing BMI, income group, or cycle values are excluded."
   ) +
+  scale_y_continuous(limits = c(0, NA)) +
   theme_minimal(base_size = 12) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
