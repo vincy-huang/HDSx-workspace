@@ -1,43 +1,62 @@
 ---
-title: "Three-Slide KT Story"
-author: "Student Name"
+title: "BMI Pattern for Middle-Income Adults"
+author: "Vincy Huang"
 format:
   revealjs:
     slide-number: true
     embed-resources: true
 bibliography: ../../../references.bib
 ---
-## Tasks
-- [] Choose one figure, table, or dashboard finding from prior work.
-- [] Define the audience in one sentence.
-- [] Write one plain-language takeaway that a non-technical reader can understand.
-- [] Create either slides.qmd as a revealjs deck or slide-outline.qmd as a structured slide outline. Copy the corresponding starter from assignments/assignment08-communication/ in your personal workspace into its submission/ folder and rename it before editing. Do not edit the original starter.
-- [] Include 3-5 slides or slide sections: context, evidence, takeaway, limitation, and next step.
-- [] Add one source note or citation for the dataset.
-- [] Complete the in-studio partner review early enough to make at least one A8 revision before submission. Also complete the Canvas Discussion exchange by the standard syllabus deadline — Monday after the Week 9 class, 4:00 PM. Canvas feedback may inform the presentation deck or final-portfolio revisions; it is not the feedback source required before the initial A8 submission.
-- [] Revise at least one sentence or slide based on feedback.
-- [] Document any AI assistance used for simplification, slide wording, or feedback synthesis.
+## Context: The Question
 
-## Question And Audience
+**Audience:** Public-health analysts preparing a short briefing for a program-planning team.
 
-**Audience:** Name the group that needs this result.
+**Question:** How did mean BMI change across NHANES cycles for adults ages 20-80 in the middle-income group?
 
-**Question:** State one focused question.
+**Why it matters:** A gradual population-level shift may indicate whether a longer-term health trend deserves follow-up, while avoiding an unsupported claim that income caused the change.
 
-**Why it matters:** Explain the practical decision or conversation this result supports.
+## Evidence: A Small Rise Over Time
 
-## Evidence
+::: {.columns}
+::: {.column width="50%"}
+![Assignment 7 dashboard showing mean BMI by NHANES cycle for middle-income adults ages 20-80](../../assignment07-dashboard/submission/dashboard-preview.png){width="100%"}
+:::
 
-Insert one figure or table from prior work.
+::: {.column width="50%"}
+### Finding
 
-State the finding in one sentence.
+::: {style="font-size: 70%;"}
+* In the prepared classroom dataset, the **unweighted mean BMI among middle-income adults rose from 29.0 in 1999-2000 to 30.3 in 2021-2023**.
+:::
+:::
+:::
 
-Source note: CDC/NCHS NHANES public-use data are the source for the NHANES classroom example [@cdc-nhanes].
+::: footer
+::: {.small}
+Source: CDC/NCHS NHANES public-use data, prepared as the classroom Health Equity dataset [@cdc-nhanes].
+:::
+:::
 
-## Limitation And Next Step
+## Takeaway: The Main Message
+::: {style="font-size: 70%;"}
 
-**Limitation:** State what the evidence cannot prove.
+**Plain-language takeaway:** Among middle-income adults in the classroom sample, average BMI has been fairly stable but moved about 1.3 points higher over 1999–2000.
 
-**Next step:** Name one action, discussion, or analysis that should follow.
+- It is a **pattern across measurement cycles**, not a year-by-year change nor a causal one.
+- The change is **small relative to the full range shown**, so it should not be presented as a crisis or as proof of worsening health.
+- BMI describes body weight relative to height and is not a complete measure of health.
 
-**AI-use note:** State whether AI helped draft or revise the slide wording and what you checked.
+:::
+
+## Limitation and Next Step
+**Limitation:** These are descriptive, unweighted classroom summaries. They do not represent national estimates and cannot show why BMI changed or establish causation.
+
+**Next step:** Pair this pattern with weighted trend analysis and comparisons across income groups, age groups, and health outcomes before it informs program decisions.
+
+**Revision made from partner feedback:** Added the exact 1.3-point change and clarified that BMI is only one incomplete measure of health.
+
+ 
+### **References**
+
+::: {#refs}
+:::
