@@ -7,16 +7,16 @@ format:
 ---
 ## Tasks
 
--[x] Create or use the folder `assignments/assignment07-dashboard/submission/`.
--[x] Copy `assignments/assignment07-dashboard/dashboard-starter.qmd to assignments `assignment07-dashboard/submission/dashboard.qmd. Adapt and render this copy from the repository root. The Shiny exemplar is a demonstration and is not an approved A7 submission pathway without prior instructor approval.
--[] Choose one audience, such as a **public-health analyst, student project team, or briefing group**.
--[] Write one audience-specific dashboard question.
--[] Identify one control, filter, or dashboard-style interaction and the visualization it affects.
--[] Identify one label, caption, help text, interpretation note, or README sentence that could be clearer for that audience.
--[] Make one **documentation-only or UI-text-only improvement**. **Do not** change analytic logic for this assignment.
--[] Re-render the starter dashboard with a different control value and record the test result.
--[] Write one limitation statement that belongs in or beside the dashboard.
--[] Complete the privacy-safe publishing check before sharing screenshots or rendered outputs.
+- [x] Create or use the folder `assignments/assignment07-dashboard/submission/`.
+- [x] Copy `assignments/assignment07-dashboard/dashboard-starter.qmd to assignments `assignment07-dashboard/submission/dashboard.qmd. Adapt and render this copy from the repository root. The Shiny exemplar is a demonstration and is not an approved A7 submission pathway without prior instructor approval.
+- [x] Choose one audience, such as a **public-health analyst, student project team, or briefing group**.
+- [x] Write one audience-specific dashboard question.
+- [x] Identify one control, filter, or dashboard-style interaction and the visualization it affects.
+- [x] Identify one label, caption, help text, interpretation note, or README sentence that could be clearer for that audience.
+- [x] Make one **documentation-only or UI-text-only improvement**. **Do not** change analytic logic for this assignment.
+- [x] Re-render the starter dashboard with a different control value and record the test result.
+- [x] Write one limitation statement that belongs in or beside the dashboard.
+- [x] Complete the privacy-safe publishing check before sharing screenshots or rendered outputs.
 
 
 <!-- AI-EDIT(2026-06-22): REVIEW-row194 (MIT-078/MIT-080) — per-page embed-resources:true so the standalone downloaded HTML bundles the plot (narrow fix per instructor decision; verify it survives the book render) -->
@@ -34,13 +34,13 @@ shown in class is a demonstration only; adapt this Quarto file instead.
 
 ## Goal
 
-This starter shows how to turn the Week 7 descriptive summary into a dashboard-style KT product. It uses one editable control value, one visualization, one table, one interpretation, and one caution — the 1-1-1-1-1 rule made concrete.
+Descriptive dashboard of unweighted mean BMI by income group across NHANES cycles, for classroom use.
 
 ## Audience Question
 
-Audience: a public-health analyst preparing a short briefing on descriptive BMI patterns in the classroom NHANES equity dataset.
+Audience: a public-health analyst preparing a short briefing from the classroom NHANES equity dataset.
 
-Question: among adults age 20-80, how does mean BMI vary across NHANES cycles for one selected income group?
+**Question**: For the selected income group, how has mean BMI changed across NHANES cycles among adults ages 20-80?
 
 ## Setup
 
@@ -66,12 +66,12 @@ nhanes <- read_csv(data_path, show_col_types = FALSE)
 
 ## Control
 
-In a Shiny app, this would become a dropdown. In this static starter, change the value of `selected_income` and render again.
+This income-group selection acts like a dashboard dropdown. In this static version, change `selected_income` and render again; the table and line chart both update.
 
 ```{r}
 #| label: dashboard-control
 available_income_groups <- sort(unique(na.omit(nhanes$IncomeGroup)))
-selected_income <- "Low Income (<1.3)"
+selected_income <- "Middle Income"
 
 if (!selected_income %in% available_income_groups) {
   selected_income <- available_income_groups[1]
@@ -80,8 +80,7 @@ if (!selected_income %in% available_income_groups) {
 selected_income
 ```
 
-<!-- AI-EDIT(2026-06-11): MIT-081 — needs review -->
-For example, change the line to `selected_income <- "Middle Income"` — the other valid value in the classroom dataset is `"High Income (>3.5)"`. Copy the value exactly, including the quotes and any parentheses.
+For a briefing, use the exact label shown in the data: `"Middle Income"`, `"Low Income (<1.3)"`, or `"High Income (>3.5)"`. Copy the label exactly, including capitalization, quotes, and parentheses.
 
 ## Summary
 
@@ -113,11 +112,11 @@ ggplot(dashboard_summary, aes(x = Cycle, y = mean_bmi, group = 1)) +
   geom_line(linewidth = 0.8, color = "#2f6f73") +
   geom_point(size = 2.4, color = "#2f6f73") +
   labs(
-    title = paste("Mean BMI for", selected_income),
-    subtitle = "Adults age 20-80 in the prepared NHANES Health Equity classroom dataset",
+    title = paste("How has mean BMI changed across NHANES cycles for", selected_income, "adults ages 20-80?"),
+    subtitle = "Adults ages 20-80; selected from the prepared NHANES Health Equity classroom dataset",
     x = "NHANES cycle",
     y = "Mean BMI",
-    caption = "Descriptive, unweighted classroom summary. Missing BMI, income group, cycle, and out-of-cohort ages are excluded."
+    caption = "Figure 1. Compare mean BMI across NHANES cycles for the selected income group among adults \n ages 20-80. Descriptive and unweighted; missing BMI, income group, or cycle values are excluded."
   ) +
   theme_minimal(base_size = 12) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
